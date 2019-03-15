@@ -3,6 +3,7 @@
   import Test from './template/test';
 
   const appVue = new Vue(Test).$mount('#test');
+
   const {shell,app}=require('electron').remote
 
 
@@ -20,19 +21,24 @@
                   var filedir = path.join(filePath, filename);//获取当前文件的绝对路径
                   fs.stat(filedir,function(eror, stats){//根据文件路径获取文件信息，返回一个fs.Stats对象
                       if(eror){
-                          console.warn('获取文件stats失败');
+                          //console.warn('获取文件stats失败');
                       }else{
                           var isFile = stats.isFile();//是文件
                           var isDir = stats.isDirectory();//是文件夹
-                          var file_item={"name":filename,"path":filedir}
+                          var file_item={"name":filename,"path":filedir,"mtime":stats.mtimeMs}
                           if(isFile){
+                            file_item["size"]=Math.ceil(stats.size/1024);
+                            var a=filename.split(".")
+                            file_item["type"]=a[a.length-1];
                             appVue.files.push(file_item);
+
                               /*console.log(filedir);
   　　　　　　　　　　　　　　　　　// 读取文件内容
                               var content = fs.readFileSync(filedir, 'utf-8');
                               console.log(content);*/
                           }
                           if(isDir){
+                            file_item["type"]="文件夹";
                             appVue.directory.push(file_item);
                               //fileDisplay(filedir);//递归，如果是文件夹，就继续遍历该文件夹下面的文件
                           }

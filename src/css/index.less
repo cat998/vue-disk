@@ -1,0 +1,49 @@
+*{
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+}
+.fileitem{
+    font-family: Microsoft YaHei;
+    height: 20px;
+    cursor: default;
+    font-size: 0.8em;
+    min-width: 300px;
+    white-space: nowrap;
+}
+.fileitem:hover{
+    background-color: rgb(229, 243, 255);
+}
+
+.header {
+    width: 20%;
+    background-color: #ff5722;
+    color: #ffffff;
+    >ul {
+        width: 100%;
+        @include clearfix;
+        >li {
+            width: 100%;
+            border: 1px solid #ffffff;
+            cursor: pointer; // float: left;
+            color: 20px;
+            text-align: center;
+            line-height: 60px;
+            &:hover {
+                background-color: #ff9800;
+            }
+            >ul {
+                width: 100%;
+                background: red;
+                li{
+                    &:hover{
+                        background: #c31111;
+                    }
+                }
+            }
+        }
+        .active {
+            background-color: #ff9800;
+        }
+    }
+}
