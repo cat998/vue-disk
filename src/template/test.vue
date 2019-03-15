@@ -1,17 +1,20 @@
 <template>
 <div>
-  <button @click="root" style="position:fixed;top:0px;left:0px;">此电脑</button><input type="text">
-    <div v-for="(item,index) in disks" :key="index + 'c'" class="disk fileitem" :data-path="item.path" @dblclick="open_directory(item.path)" @contextmenu.prevent="rightclick(item.path)"><img src="./img/disk.ico" width=20px height=20px alt=""/>&nbsp;本地磁盘&nbsp;({{item.name}}:)</div>
-
-  <table id="sample2" width="100%" border="0" cellpadding="0" cellspacing="0" style="width:100%;">
-    <tr><td>名称</td><td>修改日期</td><td>类型</td><td>大小</td></tr>
+  <div v-for="(item,index) in sortdisks" :key="index + 'c'" class="disk" :data-path="item.path" @dblclick="open_directory(item.path)" @contextmenu.prevent="rightclick(item.path)"><img src="./img/disk.ico" width=20px height=20px alt=""/>&nbsp;本地磁盘&nbsp;({{item.name}}:)</div>
+  <div id="pathbar" style="clear:both;">  
+    <button v-for="(item,index) in pathlog" :key="index+'path'" @click="open_directory(item.path)">{{item.name}}\</button>
+  </div>
+  <div>
+  <table id="tb_1" width="80%" border="0" cellpadding="10" cellspacing="0">
+    <tr style="font-size:0.8em;"><td>名称</td><td>修改日期</td><td>类型</td><td style="text-align:right;">大小</td></tr>
     <tr v-for="(item,index) in directory" :key="index+item.name"  class="directory fileitem" :data-path="item.path" @dblclick="open_directory(item.path)">
-      <td><img src="./img/directory.ico" width=20px height=20px alt=""/>&nbsp;{{item.name}}</td><td>{{getLocalTime(item.mtime)}}</td><td>{{item.type}}</td><td></td>
+      <td><img src="./img/directory.jpg" width=13px height=15px alt=""/>&nbsp;{{item.name}}</td><td>{{getLocalTime(item.mtime)}}</td><td>{{item.type}}</td><td></td>
     </tr>
     <tr v-for="(item,index) in files" :key="index + 'b'" class="file fileitem" :data-path="item.path" @dblclick="open_file(item.path)">
-      <td><img src="./img/file.ico" width=20px height=20px alt=""/>&nbsp;{{item.name}}</td><td>{{getLocalTime(item.mtime)}}</td><td>{{item.type}}</td><td>{{toThousands(item.size)}}&nbsp;KB</td>
+      <td><img src="./img/file.jpg" width=13px height=15px alt=""/>&nbsp;{{item.name}}</td><td>{{getLocalTime(item.mtime)}}</td><td>{{item.type}}</td><td style="text-align:right;">{{toThousands(item.size)}}&nbsp;KB</td>
     </tr> 
   </table>
+  </div>
 </div>
 </template>
 
@@ -24,19 +27,31 @@ export default {
        files:[],
        disks:[],
        directory:[],
+       pathlog:[],
+    }
+  },
+  computed:{
+    sortdisks:function(){
+      return this.disks.sort((a,b)=>{
+        return a.name>b.name;
+      });
     }
   },
   methods:{
-    root:function(){
-      this.files=[];
-      this.disks=[];
-      this.directory=[];
-      GetPanfu();
-    },
     open_directory:function(path){
-      this.files=[];
-      this.disks=[];
-      this.directory=[];
+      var a=path.split("\\")
+      this.pathlog=[];
+      for(var i=0;i<a.length;i++){
+        if(a[i]==""){
+          continue;
+        }
+        if(i==0){
+          this.pathlog.push({"name":"本地磁盘("+a[i].toUpperCase()+")","path":a[i]+'\\'});
+          continue;
+        }
+        this.pathlog.push({"name":a[i],"path":a.slice(0,i+1).join("\\")});
+      }
+      console.log(path);
       fileDisplay(path);
     },
     open_file:function(path){

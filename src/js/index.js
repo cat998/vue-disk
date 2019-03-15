@@ -2,6 +2,7 @@
   import Vue from 'vue';
   import Test from './template/test';
 
+
   const appVue = new Vue(Test).$mount('#test');
 
   const {shell,app}=require('electron').remote
@@ -13,6 +14,9 @@
   //fileDisplay(filePath);//调用文件遍历方法
   function fileDisplay(filePath){//文件遍历方法
     $("#test").html("");
+    appVue.files=[];
+
+    appVue.directory=[];
       fs.readdir(filePath,function(err,files){//根据文件路径读取文件，返回文件列表
           if(err){
               console.warn(err)
@@ -52,7 +56,6 @@
   GetPanfu();
   function GetPanfu() {
       var panfu=["a:\\","b:\\","c:\\","d:\\","e:\\","f:\\","g:\\","h:\\"]
-      var exit_panfu={}
       panfu.forEach(function(i){
         var resolve_path=path.resolve(i);
         fs.readdir(resolve_path,function(err,files){//根据文件路径读取文件，返回文件列表
@@ -64,4 +67,6 @@
       });
     });
   }
+
+
 
